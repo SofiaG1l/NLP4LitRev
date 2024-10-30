@@ -140,6 +140,16 @@ def CoordsSquarePts(CTR,LN,N,INC_LEN=False):
 # The next functions split the points in the squares
 # =============================================================================
 
+# Optimal number of points per layer
+def MAXpts(L):
+    if type(L)!=int or L<0:
+        print("Only positive integers are accepted.")
+        return(None)
+    if L==0:
+        return(1)
+    else:
+        return((2*L-1)*4)
+    
 # Function to distribute points in squares
 ## Yes
 def DistPts(N,L=None):

@@ -20,13 +20,27 @@ import regex as re
 import itertools as it
 
 # Import Text Processing Libraries
-import textacy as txt
+# import textacy as txt
 import spacy as spacy
 from spacy.tokenizer import Tokenizer
 
 # =============================================================================
 # Function to extract only words
 # =============================================================================
+def FriendOfFriend(S1,S2):
+    if S1=="+/-" or S2=="+/-":
+        if S1=="+/-":
+            return(S2)
+        if S2=="+/-":
+            return(S1)
+    elif S1==S2:
+        return("+")
+    elif S1!=S2:
+        return("-")
+    else:
+        return("")
+
+
 ## Yes
 def tokenize(text):
     if pd.isna(text):
@@ -163,9 +177,12 @@ def CleanText(tt,DIR="C:\\Dropbox\\TU_Delft\\Projects\\Floods_CCA\\PROCESSED\\",
     with open(DIR+"Temporal.txt", "w", encoding='utf-8') as text_file:
         text_file.write(tt)
     # Replacing abreviations with meanings
-    subprocess.run('conda run -n scispacy python "'+DIR_main+"FindAbreviations.py"+'" "'+DIR+"Temporal.txt"+'"',
+    # subprocess.run('conda run -n scispacy python "'+DIR_main+"FindAbreviations.py"+'" "'+DIR+"Temporal.txt"+'"',
+    #                shell=True, check=True)
+    subprocess.run('conda run -n scispacy python "'+DIR_main+"FindAbreviations.py"+\
+                   '" "'+DIR+"Temporal.txt"+'" "'+DIR+"TemporalABR.csv"+'"',
                    shell=True, check=True)
-    ABR=pd.read_csv(DIR+"Temporal.csv")
+    ABR=pd.read_csv(DIR+"TemporalABR.csv")
     
     TXT=ReplaceAbre(tt,ABR)
     for tt2 in TXT.split("\n"):
@@ -176,10 +193,10 @@ def CleanText(tt,DIR="C:\\Dropbox\\TU_Delft\\Projects\\Floods_CCA\\PROCESSED\\",
         with open(DIR+"Temporal.txt", "w", encoding='utf-8') as text_file:
             text_file.write(text)
         
-        # Replacing pronouns with objects
+        # Replacing pronouns with objects removed: neuralcoref2
         subprocess.run('conda run -n neuralcoref2 python "'+DIR_main+"MainNeuralCoref.py"+'" "'+DIR+"Temporal.txt"+'"',
                        shell=True, check=True)
-        
+
         with open(DIR+"Temporal.txt", encoding='utf-8') as text_file:
             new_text2+=text_file.read()+"\n"
     

@@ -405,7 +405,7 @@ def findSVAOs(tokens,nlp):
                                 obj_desc_tokens = Look4Ents(obj,tokens)
                             else: 
                                 obj_desc_tokens = find_noun_right(tokens,v.i+1)
-                            sub_compound = GenSubj(sub,v,tokens)
+                            sub_compound = GenSubj(sub,v,tokens,nlp)
                             svos.append((" ".join(tok for tok in sub_compound),
                                          "!" + v.lemma_ if verbNegated or objNegated else v.lemma_,
                                          obj_desc_tokens))
@@ -425,7 +425,7 @@ def findSVAOs(tokens,nlp):
                                     obj_desc_tokens = Look4Ents(obj,tokens)
                                 else: 
                                     obj_desc_tokens = find_noun_right(tokens,v.i+1)
-                                sub_compound = GenSubj(sub,v,tokens)
+                                sub_compound = GenSubj(sub,v,tokens,nlp)
                                 svos.append((" ".join(tok for tok in sub_compound),
                                              "!" + v.lemma_ if verbNegated or objNegated else v.lemma_,
                                              obj_desc_tokens))
@@ -433,12 +433,12 @@ def findSVAOs(tokens,nlp):
                                 objNegated = isNegated(obj)
                                 # obj_desc_tokens = generate_left_right_adjectives2(obj,tokens)
                                 obj_desc_tokens = find_noun_right(tokens,v.i+1)
-                                sub_compound = GenSubj(sub,v,tokens)
+                                sub_compound = GenSubj(sub,v,tokens,nlp)
                                 svos.append((" ".join(tok for tok in sub_compound),
                                              "!" + v.lemma_ if verbNegated or objNegated else v.lemma_,
                                              obj_desc_tokens))
         else:
-            svos.append(PresentSentence(tokens, v)[0])
+            svos.append(PresentSentence(tokens, v,nlp)[0])
     
     # Keeping unique elements
     svos=list(set(svos))
