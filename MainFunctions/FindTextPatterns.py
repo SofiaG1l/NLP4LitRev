@@ -28,7 +28,7 @@
 # Conda Environment to run the code:
 #   - @SofiaG1L/NLP4LitRev/PY_ENVIRONMENT/pytorch_textacy.yml
 # 
-# These functions are based on the code from:
+# These functions are based on:
 # - Original code from (Accessed March 2023): 
 #   https://github.com/NSchrading/intro-spacy-nlp/blob/master/subject_object_extraction.py.
 # - Modified by (Accessed March 2023): 
