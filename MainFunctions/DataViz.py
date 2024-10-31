@@ -120,7 +120,14 @@ def CheckPTS(N,SIDES=4):
             break
     return(PTSperSIDE)
 
-## Yes
+# This function creates the base square coords
+def Coords(CTR,LN):
+    x=CTR[0]
+    y=CTR[1]
+    XY=[(x,y+LN*0.5),(x,y-LN*0.5),
+        (x+LN*0.5,y),(x-LN*0.5,y)]
+    return(XY)
+
 def CoordsSquarePts(CTR,LN,N,INC_LEN=False):
     # Generate Basic Coords
     XY=Coords(CTR,LN)
