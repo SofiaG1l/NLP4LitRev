@@ -1,8 +1,42 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 16 09:48:36 2023
 
-@author: sgilclavel
+"""
+##################################
+# 
+# Author: Dr. Sofia Gil-Clavel
+# 
+# Last update: October 31st, 2024.
+# 
+# Description: Main functions used in the articles:
+#   - Gil-Clavel, Sofia, and Tatiana Filatova. “Using Natural Language Processing
+#       and Networks to Automate Structured Literature Reviews: An Application to 
+#       Farmers Climate Change Adaptation.” arXiv, July 3, 2024. 
+#       https://arxiv.org/abs/2306.09737v2.
+#   - Gil-Clavel, S., Wagenblast, T., Akkerman, J., & Filatova, T. (2024, April 26). 
+#       Patterns in Reported Adaptation Constraints: Insights from Peer-Reviewed 
+#       Literature on Flood and Sea-Level Rise. https://doi.org/10.31235/osf.io/3cqvn
+#   - Gil-Clavel, S., Wagenblast, T., & Filatova, T. (2023, November 24). Incremental
+#       and Transformational Climate Change Adaptation Factors in Agriculture Worldwide:
+#       A Natural Language Processing Comparative Analysis. 
+#       https://doi.org/10.31235/osf.io/3dp5e
+# 
+# Computer Environment:
+#   - Windows 
+#   - Microsoft Windows 10 Enterprise
+#   - Python 3.11
+# 
+# Conda Environment to run the code:
+#   - @SofiaG1L/NLP4LitRev/PY_ENVIRONMENT/pytorch_textacy.yml
+# 
+# These functions are based on the code from:
+# - Original code from (Accessed March 2023): 
+#   https://github.com/NSchrading/intro-spacy-nlp/blob/master/subject_object_extraction.py.
+# - Modified by (Accessed March 2023): 
+#   https://stackoverflow.com/questions/39763091/how-to-extract-subjects-in-a-sentence-and-their-respective-dependent-phrases.
+# - Updated by (Accessed March 2023): 
+#   https://stackoverflow.com/questions/75264790/how-to-extract-the-subject-verb-object-and-their-relationship-of-a-sentence.
+#
+##################################
 """
 
 # Data Handling
@@ -31,8 +65,7 @@ PREPOSITIONS = ["prep"]
 
 # Parameters:
 # - DIR: Directory where the csv file with the verbs is stored
-## Yes
-def SignDict(DIR="C:/Dropbox/TU_Delft/Projects/Farmers_CCA/DATA/Verbs.csv"):
+def SignDict(DIR="@SofiaG1L/Database_CCA/DATA/Verbs.csv"):
     VERBS=pd.read_csv(DIR,sep=",")
     VERBS=VERBS[VERBS.NONE!=1]
     VERBS=VERBS.reset_index(drop=True)
@@ -101,7 +134,6 @@ def SignDict(DIR="C:/Dropbox/TU_Delft/Projects/Farmers_CCA/DATA/Verbs.csv"):
 # =============================================================================
 # Use VERB to extract NOUNs
 # =============================================================================
-## Yes
 def find_noun_right(doc, count,IsPast=False):
     # Start looking to the right
     RIGHT=[]
@@ -119,7 +151,6 @@ def find_noun_right(doc, count,IsPast=False):
                 RIGHT.append(right.lemma_)
     return((' '.join(RIGHT)).lower())
 
-## Yes
 def find_noun_left(doc, count):
     # check if previous two words were VBZ + TO
     check='_'.join([token.tag_ for token in doc[(count-2):count]])
@@ -149,7 +180,6 @@ def find_noun_left(doc, count):
 
 
 # This function looks for 
-## Yes
 def FindAux(doc, verb_name,nlp):
     
     pattern = [[{'POS': 'AUX', 'OP': '+'},
@@ -179,7 +209,6 @@ def FindAux(doc, verb_name,nlp):
         
 
 # This function looks for 
-## Yes
 def IsPastPart(doc, verb_name,nlp):
     check=FindAux(doc, verb_name,nlp)
     if len(check)>0:
@@ -194,7 +223,6 @@ def IsPastPart(doc, verb_name,nlp):
     else:
         return(False)
 
-## Yes
 def PresentSentence(doc, verb_name,nlp):
     
     try:
@@ -211,14 +239,12 @@ def PresentSentence(doc, verb_name,nlp):
         PHRASE=extract_rel_verbs(doc, verb_name=verb_name)
         return([PHRASE])
         
-## Yes
 def extract_rel_verbs(doc, verb_name,IsPast=False):
     # Transforming nouns into its lemmas
     RIGHT = find_noun_right(doc, verb_name.i+1,IsPast=IsPast)
     LEFT = find_noun_left(doc, verb_name.i) 
     return((LEFT,verb_name.lemma_,RIGHT))
 
-## Yes
 def getSubsFromConjunctions(subs):
     moreSubs = []
     for sub in subs:
@@ -231,7 +257,6 @@ def getSubsFromConjunctions(subs):
                 moreSubs.extend(getSubsFromConjunctions(moreSubs))
     return moreSubs
 
-## Yes
 def getObjsFromConjunctions(objs):
     moreObjs = []
     for obj in objs:
@@ -244,7 +269,6 @@ def getObjsFromConjunctions(objs):
                 moreObjs.extend(getObjsFromConjunctions(moreObjs))
     return moreObjs
             
-## Yes
 def findSubs(tok):
     head = tok.head
     while head.pos_ != "VERB" and head.pos_ != "NOUN" and head.head != head:
@@ -261,7 +285,6 @@ def findSubs(tok):
         return [head], isNegated(tok)
     return [], False
 
-## Yes
 def isNegated(tok):
     negations = {"no", "not", "n't", "never", "none"}
     for dep in list(tok.lefts) + list(tok.rights):
@@ -269,7 +292,6 @@ def isNegated(tok):
             return True
     return False
 
-## Yes
 def getObjsFromPrepositions(deps):
     objs = []
     for dep in deps:
@@ -278,7 +300,6 @@ def getObjsFromPrepositions(deps):
                 [tok for tok in dep.rights if tok.dep_ in OBJECTS or (tok.pos_ == "PRON" and tok.lower_ == "me")])
     return objs
 
-## Yes
 def getObjFromXComp(deps):
     for dep in deps:
         if dep.pos_ == "VERB" and dep.dep_ == "xcomp":
@@ -290,7 +311,6 @@ def getObjFromXComp(deps):
                 return v, objs
     return None, None
 
-## Yes
 def getAllSubs(v):
     verbNegated = isNegated(v)
     subs = [tok for tok in v.lefts if tok.dep_ in SUBJECTS and tok.pos_ != "DET"]
@@ -305,7 +325,6 @@ def getAllSubs(v):
         
     return subs, verbNegated
 
-## Yes
 def getAllObjsWithAdjectives(v):
     # rights is a generator
     rights = list(v.rights)
@@ -324,13 +343,10 @@ def getAllObjsWithAdjectives(v):
         objs.extend(getObjsFromConjunctions(objs))
     return v, objs
 
-## Yes
 def GenSubj(sub,v,tokens,nlp):
     if sub.i>0:
         aux=FindAux(tokens,v,nlp)
         if len(aux)>0:
-            AUX=[x for x in aux[0] if x.pos_=="AUX"][0]
-            VRB=[x for x in aux[0] if x.pos_=="VERB"][0]
             if sub in aux[0]:
                 sub=tokens[aux[0][0].i-1]
         LEFTS=[t for t in sub.lefts]
@@ -350,7 +366,6 @@ def GenSubj(sub,v,tokens,nlp):
     else:
         return([sub.lemma_])
 
-## Yes
 def SplitMarker(text,nlp):
     subText=[]
     for cc,ii in enumerate(text):
@@ -372,14 +387,12 @@ def SplitMarker(text,nlp):
     SENTENCES=[nlp(ii.text) for ii in SENTENCES]
     return(SENTENCES)
 
-## Yes
 def Look4Ents(obj,tokens):
     ENTS=tokens.ents
     for ii in ENTS:
         if obj.i in range(ii.start,ii.end):
             return(ii.text)
         
-## Yes
 def findSVAOs(tokens,nlp):
     svos = []
     verbs = [tok for tok in tokens if 
@@ -458,7 +471,6 @@ def findSVAOs(tokens,nlp):
 
 
 ### Function to detect the sentences that are fidings
-## Yes
 def Finding(text,nlp0):
     if not pd.isna(text):
         VAL=(nlp0(text)).cats["POS"]
@@ -469,7 +481,6 @@ def Finding(text,nlp0):
     else:
         return(0)
 
-## Yes
 def NegSIGN(SIGN):
     if SIGN=="+":
         return("-")
@@ -478,7 +489,6 @@ def NegSIGN(SIGN):
     else:
         return("+/-")
 
-## Yes
 def SignVerbSplit(VRB,NOUNB,VERBS_dict):
     ss=VRB.split("!")
     
@@ -515,7 +525,6 @@ def SignVerbSplit(VRB,NOUNB,VERBS_dict):
         # If there is no direction then drop
         return("",NOUNB)
         
-## Yes
 def FindAllSents(text, nlp1, nlp2, VERBS_dict):
     SENTENCES=SplitMarker(nlp2(text),nlp1)
     

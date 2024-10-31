@@ -1,8 +1,38 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Nov 25 11:26:20 2022
 
-@author: sgilclavel
+"""
+##################################
+# 
+# Author: Dr. Sofia Gil-Clavel
+# 
+# Last update: October 31st, 2024.
+# 
+# Description: Main functions used in the articles:
+#   - Gil-Clavel, Sofia, and Tatiana Filatova. “Using Natural Language Processing
+#       and Networks to Automate Structured Literature Reviews: An Application to 
+#       Farmers Climate Change Adaptation.” arXiv, July 3, 2024. 
+#       https://arxiv.org/abs/2306.09737v2.
+#   - Gil-Clavel, S., Wagenblast, T., Akkerman, J., & Filatova, T. (2024, April 26). 
+#       Patterns in Reported Adaptation Constraints: Insights from Peer-Reviewed 
+#       Literature on Flood and Sea-Level Rise. https://doi.org/10.31235/osf.io/3cqvn
+#   - Gil-Clavel, S., Wagenblast, T., & Filatova, T. (2023, November 24). Incremental
+#       and Transformational Climate Change Adaptation Factors in Agriculture Worldwide:
+#       A Natural Language Processing Comparative Analysis. 
+#       https://doi.org/10.31235/osf.io/3dp5e
+# 
+# Computer Environment:
+#   - Windows 
+#   - Microsoft Windows 10 Enterprise
+#   - Python 3.11
+# 
+# Conda Environment to run the code:
+#   - @SofiaG1L/NLP4LitRev/PY_ENVIRONMENT/pytorch_textacy.yml
+#
+# Conda Environments that have to be installed in the computer:
+#   - @SofiaG1L/NLP4LitRev/PY_ENVIRONMENTS/EXTRA/neuralcoref2.yml
+#   - @SofiaG1L/NLP4LitRev/PY_ENVIRONMENTS/EXTRA/scispacy.yml
+# 
+##################################
 """
 
 import os as os
@@ -41,7 +71,6 @@ def FriendOfFriend(S1,S2):
         return("")
 
 
-## Yes
 def tokenize(text):
     if pd.isna(text):
         return ""
@@ -53,14 +82,13 @@ def tokenize(text):
         text=[te for te in text if len(te)>2]
         return ' '.join(text)
 
-## Yes
-def extract_entities(doc, include_types=None, sep='_'):
-    ents = txt.extract.entities(doc,
-             include_types=include_types,
-             exclude_types=None,
-             drop_determiners=True,
-             min_freq=1)
-    return [(sep.join([str(t) for t in e]),e.label_) for e in ents] # .lemma_ 
+# def extract_entities(doc, include_types=None, sep='_'):
+#     ents = txt.extract.entities(doc,
+#              include_types=include_types,
+#              exclude_types=None,
+#              drop_determiners=True,
+#              min_freq=1)
+#     return [(sep.join([str(t) for t in e]),e.label_) for e in ents] # .lemma_ 
 
 
 '''
@@ -68,19 +96,16 @@ def extract_entities(doc, include_types=None, sep='_'):
 # Find Countries Based on Entitites and Database
 # =============================================================================
 '''
-## Yes
 def CheckSubCountry(W,CITIES):
     IND=np.where([len(jj)>0 for jj in 
         [re.findall(r'\b' + W + r'\b',str(jj)) for jj in list(CITIES.subcountry)]])
     return(CITIES.iloc[IND])
 
-## Yes
 def CheckCities(W,CITIES):
     IND=np.where([len(jj)>0 for jj in 
         [re.findall(r'\b' + W + r'\b',str(jj)) for jj in list(CITIES.name)]])
     return(CITIES.iloc[IND])
 
-## Yes
 def ExtractCountryGPE(place,CITIES,DICT_PLC={}):
     place=place.lower()
     TIT1=[jj for jj in np.unique(CITIES.country).tolist() if jj.find(place)>-1]
@@ -128,7 +153,6 @@ def ExtractCountryGPE(place,CITIES,DICT_PLC={}):
                             if SUB[0][1]>SUB[1][1]:
                                 return(SUB[0][0])  
 
-## Yes
 def GPEvsNationality(x,CITIES,NATIONALITIES,DICT_PLC={}):
     if x[1] in ["GPE","LOC"]:
         return(ExtractCountryGPE(x[0],CITIES,DICT_PLC))
@@ -138,7 +162,6 @@ def GPEvsNationality(x,CITIES,NATIONALITIES,DICT_PLC={}):
         except:
             return(None)
 
-## Yes
 def ExtractCountry(x,CITIES,NATIONALITIES,DICT_PLC={},TYPE=["GPE","LOC","NORP"]):
     if type(x)==list:
         STD0=[jj for jj in x if jj[1] in TYPE]
@@ -149,7 +172,6 @@ def ExtractCountry(x,CITIES,NATIONALITIES,DICT_PLC={},TYPE=["GPE","LOC","NORP"])
     else:
         return([])
 
-## Yes
 def get_continent(col):
     text=os.popen('conda run -n scispacy python ".\\ConvertCountries.py" "'+col+'"').read()
     if len(text)<=9:
@@ -160,7 +182,6 @@ def get_continent(col):
         return(["Unknown","Unknown"])
 
 ### Functions to clean text ###
-## Yes
 def ReplaceAbre(TXT,ABR): 
     for ii in range(ABR.shape[0]):
         # break
@@ -170,7 +191,6 @@ def ReplaceAbre(TXT,ABR):
         TXT=re.sub(r'(?:^|\W)'+abr+'(?:$|\W)'," "+mnn+" ",TXT)
     return(TXT)
 
-## Yes
 def CleanText(tt,DIR="C:\\Dropbox\\TU_Delft\\Projects\\Floods_CCA\\PROCESSED\\",
               DIR_main="C:\\Dropbox\\TU_Delft\\Projects\\ML_FindingsGrammar\\CODE\\Processing_PDFs\\"):
     new_text2=""
@@ -205,7 +225,6 @@ def CleanText(tt,DIR="C:\\Dropbox\\TU_Delft\\Projects\\Floods_CCA\\PROCESSED\\",
 
 
 ### Change Subject & Object to CCA measures & factors labels
-## Yes
 def LabelMeasures(text,DICT_A=None,DICT_F=None):
     ADAPT=[]
     for tt in text:

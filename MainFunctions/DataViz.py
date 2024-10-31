@@ -1,8 +1,34 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Nov 25 14:36:27 2022
 
-@author: sgilclavel
+"""
+##################################
+# 
+# Author: Dr. Sofia Gil-Clavel
+# 
+# Last update: October 31st, 2024.
+# 
+# Description: Main functions used in the articles:
+#   - Gil-Clavel, Sofia, and Tatiana Filatova. “Using Natural Language Processing
+#       and Networks to Automate Structured Literature Reviews: An Application to 
+#       Farmers Climate Change Adaptation.” arXiv, July 3, 2024. 
+#       https://arxiv.org/abs/2306.09737v2.
+#   - Gil-Clavel, S., Wagenblast, T., Akkerman, J., & Filatova, T. (2024, April 26). 
+#       Patterns in Reported Adaptation Constraints: Insights from Peer-Reviewed 
+#       Literature on Flood and Sea-Level Rise. https://doi.org/10.31235/osf.io/3cqvn
+#   - Gil-Clavel, S., Wagenblast, T., & Filatova, T. (2023, November 24). Incremental
+#       and Transformational Climate Change Adaptation Factors in Agriculture Worldwide:
+#       A Natural Language Processing Comparative Analysis. 
+#       https://doi.org/10.31235/osf.io/3dp5e
+# 
+# Computer Environment:
+#   - Windows 
+#   - Microsoft Windows 10 Enterprise
+#   - Python 3.11
+# 
+# Conda Environment to run the code:
+#   - @SofiaG1L/NLP4LitRev/PY_ENVIRONMENT/pytorch_textacy.yml
+#
+##################################
 """
 
 # Network Analysis
@@ -24,7 +50,6 @@ import distinctipy as distinctipy
 # Functions to create the Network Graph
 # =============================================================================
 
-## Yes
 def CoordsCircle(CTR,R,N,INC_LEN=False):
     if N>1:
         # N=N-1
@@ -52,7 +77,6 @@ def CoordsCircle(CTR,R,N,INC_LEN=False):
         return(points)
     
 
-## Yes
 def RandChose(XY,N):
     XY_=range(len(XY))
     IND=random.sample(XY_, N)
@@ -60,7 +84,6 @@ def RandChose(XY,N):
     NOCH=[v for c,v in enumerate(XY) if c not in IND]    
     return(CH,NOCH)
 
-## Yes
 def SplitCoords(XY,CTR,LN,h): 
     p0=1.0/(1.0+h)
     XY1=[]
@@ -86,7 +109,6 @@ def SplitCoords(XY,CTR,LN,h):
             print("The center is wrong.")
     return(XY1)
 
-## Yes
 def CheckPTS(N,SIDES=4):
     h=int(np.floor(N/SIDES)) # At least h can be accomodated per side
     re=N-h*SIDES # There are re that need to be accomodated
@@ -151,7 +173,6 @@ def MAXpts(L):
         return((2*L-1)*4)
     
 # Function to distribute points in squares
-## Yes
 def DistPts(N,L=None):
     if L!=None: # If number of Layers is given by the user.
         SUM=sum(map(MAXpts,range(L)))
@@ -177,7 +198,6 @@ def DistPts(N,L=None):
         L=np.min(np.where(np.cumsum(CHECK)>=N))+1
         return(DistPts(N,L=L))
         
-## Yes
 def CoordsDistPts(CTR,N,LN=None,dw=10,INC_LEN=False,Type="Circle"):
     ## Placing Adapt edges in Graph
     LEN=DistPts(N,LN)
@@ -204,7 +224,6 @@ def CoordsDistPts(CTR,N,LN=None,dw=10,INC_LEN=False,Type="Circle"):
 # Other useful functions
 # =============================================================================
 
-## Yes
 def CoordsRotateDict(XY,T):
     XY1={}
     for k,v in XY.items():
@@ -216,14 +235,12 @@ def CoordsRotateDict(XY,T):
 # The next functions are to Plot the graph based on the Modulrarity
 # =============================================================================
 
-## Yes
 def UpdateCoords(DictCoords,xn,yn):
     NDC={}
     for k,v in DictCoords.items():
         NDC[k]=(v[0]+xn,v[1]+yn)
     return(NDC)
 
-## Yes
 def INSIDESQR(DictCoords,UCR,LCR):
     ANY=[]
     Xmax=LCR[0]; Xmin=UCR[0]
@@ -232,7 +249,6 @@ def INSIDESQR(DictCoords,UCR,LCR):
         ANY.append(not (v[0] < Xmin or v[0] > Xmax or v[1] < Ymin or v[1] > Ymax))
     return(any(ANY))
 
-## Yes
 def CheckMinMax(posn):
     MIN_X=np.Infinity
     MAX_X=-np.Infinity
@@ -252,7 +268,6 @@ def CheckMinMax(posn):
     
     return((MIN_X,MAX_X),(MIN_Y,MAX_Y))
 
-## Yes
 def RelocateCoords(pos,MEAS):
     posn={}
     # Changing coords to fit all sub networks
@@ -355,7 +370,6 @@ def RelocateCoords(pos,MEAS):
         
     return(posn)
 
-## Yes
 def PosModularity(WORDS_DB,COMMU=None,dw=30, delta=5, ROTATE=False,weight=None,
                   delta_edge=1,min_edge=None,resolution=1):
     
@@ -535,7 +549,6 @@ def plotNet(G,pos,fontsize=8, VERTEX=True, MODULARITY=False, N_M=None,
 
 
 ''' Functions to redistribute nodes and edges weights '''
-## Yes
 def MapSeries(vector,MIN=0,MAX=1):
     ### Biyective function to map a series into a (MIN,MAX) range
     MIN_0=min(vector)
@@ -543,7 +556,6 @@ def MapSeries(vector,MIN=0,MAX=1):
     vector2=[MIN+(MAX-MIN)/(MAX_0-MIN_0)*(ii-MIN_0) for ii in vector]
     return(vector2)
 
-## Yes
 def SigmoidEdge(vector,q,L=1, x0=0, k=-1):
     ### Function to map values into sigmoid (0,1) range, kind of like probabilities
     # :param float L: the curve’s maximum value
@@ -552,7 +564,6 @@ def SigmoidEdge(vector,q,L=1, x0=0, k=-1):
     # :param list(float) vector: the input
     return([L/(1+np.exp(-k*(ii-x0))) for ii in vector])
 
-## Yes
 def QuantilesWeight(vector,q,L=1, x0=0, k=1):
     ### Function to give more weight to the points above the q quantile
     # :param float q: the quantile
@@ -565,7 +576,6 @@ def QuantilesWeight(vector,q,L=1, x0=0, k=1):
     nq=np.quantile(vector,q=q)
     return(SigmoidEdge(vector,None,L=L, x0=nq, k=k))
 
-## Yes
 def QuantilesWeight_upQ(vector,q,L=1, x0=0, k=1):
     ### Function to only give weight to the points above the q quantile
     # :param float q: the quantile
@@ -579,7 +589,6 @@ def QuantilesWeight_upQ(vector,q,L=1, x0=0, k=1):
     vector=[x if x>=nq else 0 for x in vector]
     return(MapSeries(vector,MIN=0,MAX=L))
 
-## Yes
 def plotNet_ChooseColors(G,pos,fontsize=12, VERTEX=True, MODULARITY=False, 
                     N_M=None,min_target_margin=15,loc_legend='lower right',
                     TOBOLD=None,title_fontsize=12,
@@ -705,7 +714,6 @@ def plotNet_ChooseColors(G,pos,fontsize=12, VERTEX=True, MODULARITY=False,
                       bottom=0, top=1,hspace=0)
 
     # Adding subplot
-    # https://matplotlib.org/stable/gallery/lines_bars_and_markers/scatter_hist.html#sphx-glr-gallery-lines-bars-and-markers-scatter-hist-py
     ax = fig.add_subplot(gs[0,0], frameon=False)
     for label in colors_edge:
         ax.plot([0],[0],color=colors_edge[label],label=label)
@@ -739,7 +747,6 @@ def plotNet_ChooseColors(G,pos,fontsize=12, VERTEX=True, MODULARITY=False,
                 if MODULARITY:
                     t.set_bbox(dict(facecolor=COLOR_nd[k], 
                                    alpha=0.7,edgecolor=COLOR_nd[k])) # alpha=0.2, 
-    # plt.legend(scatterpoints=1, frameon=False, labelspacing=1, title='City Area')
     
     legends=[]
     
@@ -786,7 +793,6 @@ def plotNet_ChooseColors(G,pos,fontsize=12, VERTEX=True, MODULARITY=False,
 # =============================================================================
 # Functions to fix labels and text
 # =============================================================================
-## Yes
 def AddBreakLine(STR,n=2,TYPE="words",breakAfter=None):
     STR2=''
     if pd.isna(breakAfter):
